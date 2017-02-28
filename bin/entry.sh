@@ -1,15 +1,19 @@
 #!/bin/bash
 
-# Providing defaults values for missing env variables
-[ "$DEFAULT_USER" = "" ]        && export DEFAULT_USER="admin"
-[ "$DEFAULT_PASSWORD" = "" ]    && export DEFAULT_PASSWORD="$(openssl rand -base64 12)"
+touch /htpasswd
 
-printf "$DEFAULT_USER:$(openssl passwd -crypt "${DEFAULT_PASSWORD}")\n" > /htpasswd
+i=0
+user=${USER_0}
+password=${PASSWORD_0}
 
-echo "=====[ Nginx Basic Auth ]============================================"
-echo "Generated default user"
-echo "Login: $DEFAULT_USER"
-echo "Password: $DEFAULT_PASSWORD"
-echo "=========================================================================="
+while [ "$user" ]; do
+    printf "$user:$(openssl passwd -crypt "$password")\n" >> /htpasswd
+
+    let "i += 1"
+    user_var_name="USER_$i"
+    user=${!user_var_name}
+    password_var_name="PASSWORD_$i"
+    password=${!password_var_name}
+done
 
 nginx -g "daemon off;"

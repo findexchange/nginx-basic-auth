@@ -1,0 +1,9 @@
+nginx-basic-auth:
+  build: .
+  ports:
+  - 80:80
+  environment:
+    USER_0: user0
+    PASSWORD_0: test0
+    USER_1: user1
+    PASSWORD_1: test1
